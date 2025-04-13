@@ -2,26 +2,39 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
-  GetCommand,
-  DeleteCommand,
-  QueryCommand,
-  GetCommandOutput,
-  QueryCommandOutput,
   PutCommandOutput,
-  DeleteCommandOutput
+  GetCommand,
+  GetCommandOutput,
+  DeleteCommand,
+  DeleteCommandOutput,
+  QueryCommand,
+  QueryCommandOutput,
+  UpdateCommand,
+  UpdateCommandOutput,
 } from "@aws-sdk/lib-dynamodb";
 
-// export type TDBGet = {
-//   Item?: Record<string, any>;
-//   '$metadata': {
-//     httpStatusCode: number;
-//     requestId: string;
-//     extendedRequestId: string;
-//     cfId: string;
-//     attempts: number;
-//     totalRetryDelay: number;
-//   };
-// }
+
+function generateUpdateExpression(updateValues) {
+  return Object.keys(updateValues).map((key) => `#${key} = :${key}`).join(", ");
+}
+
+function generateExpressionAttributeNames(updateValues) {
+  return Object.keys(updateValues).reduce((acc, key) => {
+    acc[`#${key}`] = key;
+    return acc;
+  }, {});
+}
+
+function generateExpressionAttributeValues(updateValues) {
+  return Object.keys(updateValues).reduce((acc, key) => {
+    acc[`:${key}`] = updateValues[key];
+    return acc;
+  }, {});
+}
+
+function generateKeyConditionExpression(keys) {
+  return Object.keys(keys).map((key) => `#${key} = :${key}`).join(" AND ");
+}
 
 const db = new DynamoDBClient({
   ...(process.env.IS_OFFLINE ?
@@ -40,12 +53,51 @@ const db = new DynamoDBClient({
 const dbDocClient = DynamoDBDocumentClient.from(db)
 
 export async function genericDaoPut(table: string, item: object): Promise<PutCommandOutput> {
-  const command = new PutCommand({
+  const config = {
     TableName: table,
     Item: item,
-  })
-  return dbDocClient.send(command)
+  }
+  const command = new PutCommand(config)
+  const response = dbDocClient.send(command)
+  return response
 }
+
+export async function genericDaoUpdate(
+  table: string,
+  keys: object,
+  updateValues: object
+): Promise<UpdateCommandOutput> {
+  if (!keys || Object.keys(keys).length === 0) {
+    throw new Error("Keys must be provided and cannot be empty.");
+  }
+
+  const updateExpression = generateUpdateExpression(updateValues);
+  const expressionAttributeNames = {
+    ...generateExpressionAttributeNames(updateValues),
+    ...generateExpressionAttributeNames(keys)
+  };
+  const expressionAttributeValues = {
+    ...generateExpressionAttributeValues(updateValues),
+    ...generateExpressionAttributeValues(keys)
+  }
+  const keyConditionExpression = generateKeyConditionExpression(keys);
+
+  const config = {
+    TableName: table,
+    Key: keys,
+    UpdateExpression: `SET ${updateExpression}`,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues,
+    ConditionExpression: keyConditionExpression,
+    ReturnValues: "ALL_NEW" as const,
+  }
+
+  const command = new UpdateCommand(config);
+  const response = await dbDocClient.send(command);
+
+  return response;
+}
+
 
 export async function genericDaoGet(table: string, key: object): Promise<GetCommandOutput> {
   const command = new GetCommand({
@@ -83,3 +135,4 @@ export async function genericDaoQuery({
   })
   return dbDocClient.send(command)
 }
+

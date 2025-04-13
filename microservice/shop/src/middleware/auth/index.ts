@@ -15,14 +15,11 @@ export async function middleware(event: APIGatewayEvent, context: Context): Prom
 
     const { authorization } = lambdaSettingsGetParameters<TMiddlewareParameters>(docfy, event);
 
-    console.log('trying to validate', authorization)
     const parts = authorization.split(' ');
     const token = parts[1];
     const session = jwt.verify(token, jwtSecret);
-    console.log('validateSessionv', session)
 
-    // console.log('teste', teste);
-    return this.handler(session, event, context);
+    return this.handler({session, event, context});
   } catch (err: any) {
     const { message, error } = err;
     return lambdaRespError({

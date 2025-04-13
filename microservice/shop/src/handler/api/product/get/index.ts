@@ -2,34 +2,25 @@
 import { HttpStatuses, lambdaProcessError, lambdaResp, lambdaSettingsGetParameters } from "adapcon-utils-js";
 import type { APIGatewayEvent, Context, ProxyResult } from "aws-lambda";
 import { docfy } from "./docfy";
-import { createProduct } from "@src/controllers/product/createProduct";
+import { getProduct } from "@src/controllers/product/getProduct";
 import { middleware } from "@src/middleware/auth";
-import { TSession } from "@src/models/Session";
 
-export type CreateProductParams = {
-  name: string;
-  description: string;
-  price: number;
+export type UpdateGetParams = {
+  productId: string;
 }
 
 async function handler({
-  session,
   event,
   context
 }: {
-  session: TSession;
   event: APIGatewayEvent;
   context: Context;
 }): Promise<ProxyResult> {
   try {
-    console.log('session', session)
-    const parameters = lambdaSettingsGetParameters<CreateProductParams>(docfy, event);
+    const parameters = lambdaSettingsGetParameters<UpdateGetParams>(docfy, event);
 
-    const { email } = session;
-
-    const product = await createProduct({
+    const product = await getProduct({
       ...parameters,
-      email
     });
 
     return lambdaResp(HttpStatuses.success, product);

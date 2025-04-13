@@ -11,7 +11,8 @@ export async function createProduct({
   price: number;
   email: string;
 }) {
-  const product = new Product({
+  const product = new Product()
+  product.blankProduct({
     name,
     description,
     price,

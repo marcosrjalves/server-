@@ -63,6 +63,37 @@ functions:
           path: /v1/product
           method: POST
 
+  updateProduct:
+    handler: src/handler/api/product/update/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/product/{productId}
+          method: PUT
+
+  getProduct:
+    handler: src/handler/api/product/get/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/product/{productId}
+          method: GET
+
+  queryProduct:
+    handler: src/handler/api/product/query/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/products
+          method: GET
+
+  deleteProduct:
+    handler: src/handler/api/product/delete/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/product/{productId}
+          method: DELETE
 
 plugins:
   - serverless-plugin-typescript
