@@ -1,0 +1,29 @@
+Resources:
+  tableUser:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: User
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  tableShop:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: Shop
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+

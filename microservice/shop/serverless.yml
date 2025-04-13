@@ -1,0 +1,95 @@
+service: serverless-sandbox
+frameworkVersion: '3'
+
+package:
+  exclude:
+    - node_modules/@aws-sdk/**
+    - node_modules/**/@aws-sdk/**
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  region: us-east-1
+  stage: api
+  timeout: 30
+  tags:
+    ms: serverless-sandbox
+  logRetentionInDays: 1
+  environment:
+    LOCAL_JWT_SECRET: f2bh4uyb32ubsb23bdcunnc9435#35ds&sfj
+
+
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: 'Allow'
+  #         Action:
+  #           - 'dynamodb:*'
+  #         Resource:
+  #           - { "Fn::GetAtt": ["tableUser", "Arn" ] }
+  #       - Effect: 'Allow'
+
+functions:
+  healthCheck:
+    handler: src/handler/api/health/check.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /health/check
+          method: GET
+
+  createUser:
+    handler: src/handler/api/user/create/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/user
+          method: POST
+
+  loginUser:
+    handler: src/handler/api/session/login/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/login
+          method: POST
+
+  createProduct:
+    handler: src/handler/api/product/create/index.handler
+    memorySize: 128
+    events:
+      - http:
+          path: /v1/product
+          method: POST
+
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-tscpaths
+  - serverless-prune-plugin
+  - serverless-stage-manager
+  - serverless-offline
+  - serverless-middleware
+  - serverless-localstack
+
+custom:
+  stages:
+    - api
+    - dev
+    - local
+  prune:
+    automatic: true
+    number: 3
+  serverless-offline:
+    httpPort: 3001
+    lambdaPort: 13001
+    host: 127.0.0.1
+  localstack:
+    stages:
+      - local
+    host: http://localhost
+    edgePort: 4566
+
+resources:
+   - ${file(./db.yml)}
