@@ -1,4 +1,4 @@
-import { SecretsManagerClient, CreateSecretCommand } from "@aws-sdk/client-secrets-manager";
+import { SecretsManagerClient, CreateSecretCommand, UpdateSecretCommand, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import 'dotenv/config';
 
 const [stage] = process.argv.slice(2);
@@ -38,12 +38,25 @@ console.log('config', config);
 
 const client = new SecretsManagerClient(config);
 
+const secretName = `${stage}/jwt/secret`;
 const input = {
-  Name: `${stage}/jwt/secret`,
+  Name: secretName,
   SecretString: (stage === 'prd' || stage === 'hml') ? process.env.JWT_SECRET : 'f2bh4uyb32ubsb23bdcunnc9435#35ds&sfj',
   Description: 'JWT secret for local development',
 }
 
-const command = new CreateSecretCommand(input);
-const response = await client.send(command);
-console.log(response);
+const searchCommand = new GetSecretValueCommand({ SecretId: secretName });
+const searchResppnse = await client.send(searchCommand);
+
+  if (searchResppnse.SecretString) {
+    const updateCommand = new UpdateSecretCommand({
+      SecretId: secretName,
+    });
+    const response = await client.send(updateCommand);
+    console.log(response);
+  } else {
+    const command = new CreateSecretCommand(input);
+    const response = await client.send(command);
+    console.log(response);
+  }
+

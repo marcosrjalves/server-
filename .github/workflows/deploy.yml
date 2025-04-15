@@ -123,8 +123,16 @@ jobs:
             echo JWT_SECRET="${{ secrets.JWT_SECRET_HOMOL }}" >> ./bin/.env
         working-directory: resources
 
-      - name: creates/updates JWT secret
+      - name: creates/updates JWT secret for prod
+        if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
             cd bin/
-            node createSecrets.js
+            node createSecrets.js prd
+        working-directory: resources
+
+      - name: creates/updates JWT secret for homol
+        if: ${{ needs.changes.outputs.branch == 'homol' }}
+        run: |
+            cd bin/
+            node createSecrets.js hml
         working-directory: resources
