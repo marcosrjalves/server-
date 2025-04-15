@@ -1,0 +1,130 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.frontend.outputs.front }}
+      microservices: ${{ steps.microservices.outputs.changes }}
+      branch: ${{ steps.extract_branch.outputs.branch }}
+    steps:
+      - name: Commit Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - uses: dorny/paths-filter@v3
+        id: microservices
+        with:
+          filters: |
+            shop: microservices/shop/**
+          base: ${{ steps.extract_branch.outputs.branch }}
+
+  microservices:
+    if: ${{ needs.changes.outputs.microservices != '[]' && needs.changes.outputs.microservices != '' }}
+    needs: changes
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.microservices) }}
+      fail-fast: false
+    env:
+      root_path: microservices
+      path: microservices/${{ matrix.service }}
+    name: Deploy ${{ matrix.service }} service
+
+    steps:
+      - name: Commit checkout
+        uses: actions/checkout@v4
+
+      - name: Capture Node.js version
+        id: node_version
+        run: echo "MS_NODE_VERSION=$(grep runtime serverless.yml | awk '{print $2}' | grep -o '[0-9][0-9].x')" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.path }}
+
+      - name: Setup Node.js version to ${{ steps.node_version.outputs.MS_NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node_version.outputs.MS_NODE_VERSION }}
+
+      - name: Get npm chace directory
+        id: npm_cache_dir
+        run: echo "npm_cache_dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.path }}
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.path }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: service_deps_cache
+        if: env.path != ''
+        continue-on-error: true
+        timeout-minutes: 1
+        with:
+          path: ${{ format('{0}/{1}', env.path, 'node_modules') }}
+          key: ${{ runner.os }}-node-${{ hashFiles(format('{0}/{1}', env.path, 'package-lock.json')) }}
+
+      - name: serverless deploy prod
+        if: ${{ needs.changes.outputs.branch == 'master' }}
+        run: |
+            npx serverless deploy
+        working-directory: ${{ env.path }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: serverless deploy hml
+        if: ${{ needs.changes.outputs.branch == 'stage' }}
+        run: |
+            npx serverless deploy --stage="hml"
+        working-directory: ${{ env.path }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  secrets:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJSON(needs.changes.outputs.microservices) }}
+      fail-fast: false
+    env:
+      root_path: resources
+      path: resources
+    name: Creates JWT Secret
+
+    steps:
+      - name: created .env file for master
+        if: ${{ needs.changes.outputs.branch == 'master' }}
+        run: |
+            touch ./bin/.env
+            echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
+            echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
+            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_PROD }}"" >> ./bin/.env
+        working-directory: ${{ env.path }}
+
+      - name: created .env file for stage
+        if: ${{ needs.changes.outputs.branch == 'stage' }}
+        run: |
+            touch ./bin/.env
+            echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
+            echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
+            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_STAGE }}"" >> ./bin/.env
+        working-directory: ${{ env.path }}
+
+      - name: creates/updates JWT secret
+        run: |
+            cd ./bin/
+            node createSecrets.js
+        working-directory: ${{ env.path }}

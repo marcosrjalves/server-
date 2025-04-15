@@ -11,7 +11,7 @@ provider:
   runtime: nodejs20.x
   architecture: arm64
   region: us-east-1
-  stage: api
+  stage: prd
   timeout: 30
   tags:
     ms: serverless-sandbox

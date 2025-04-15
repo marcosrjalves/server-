@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "RUN MS SHOP",
+      "type": "shell",
+      "command": "cd microservice/shop && npm run start",
+      "problemMatcher": [],
+      "icon": {
+        "id": "credit-card",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "INSTALL MS SHOP",
+      "type": "shell",
+      "command": "cd microservice/shop && npm i",
+      "problemMatcher": [],
+      "icon": {
+        "id": "chevron-up",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "INSTALL LOCALSTACK REQUIRED PACKAGES",
+      "type": "shell",
+      "command": "cd resources && npm i",
+      "problemMatcher": [],
+      "icon": {
+        "id": "copilot",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "LOCALSTACK DOCKER COMPOSE UP",
+      "type": "shell",
+      "detail": "Makes the localstack container available",
+      "command": "cd resources && docker compose up",
+      "problemMatcher": [],
+      "icon": {
+        "id": "terminal-decoration-success",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "LOCALSTACK DOCKER COMPOSE DOWN",
+      "type": "shell",
+      "command": "cd resources && docker compose down",
+      "detail": "Disables the localstack container",
+      "problemMatcher": [],
+      "icon": {
+        "id": "terminal-decoration-error",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "CREATE LOCALSTACK JWT SECRET",
+      "type": "shell",
+      "command": "cd resources/bin && node createSecretsLocal.js",
+      "detail": "Add the JWT secret to the localstack container",
+      "problemMatcher": [],
+      "icon": {
+        "id": "terminal-bash",
+        "color": "terminal.ansiCyan"
+      }
+    }
+  ]
+}

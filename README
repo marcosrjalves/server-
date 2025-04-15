@@ -1,1 +1,41 @@
-https://www.wpoven.com/tools/free-smtp-server-for-testing
+# Project Documentation
+
+## How to Run This Project
+
+This project is designed to run inside a development container with Docker CLI pre-installed. Follow the steps below to set up and run the project:
+
+### Prerequisites
+1. Ensure you have Docker installed on your host machine.
+2. Install a development environment that supports dev containers, such as Visual Studio Code with the Remote - Containers extension.
+
+### Steps to Run the Project
+1. Clone the repository:
+  ```bash
+  git clone <repository-url>
+  cd <repository-folder>
+  ```
+
+2. Open the project in Visual Studio Code.
+
+3. Reopen the project in the dev container:
+  - Press `F1` in Visual Studio Code.
+  - Select `Remote-Containers: Reopen in Container`.
+
+4. Once the dev container is built and running, use the Docker CLI (pre-installed in the container) to manage and run the project.
+
+5. To start the application, run the following command inside the dev container:
+  ```bash
+  cd resources
+  docker-compose up
+  ```
+  - This command will start the Localstack container, containing several AWS services, including DynamoDB, S3, and Lambda
+  - The Localstack container will be accessible at `http://localhost:4566`.
+  - Alongside with Localstack, the container runs a DynamoDb local admin page, which can be accessed at `http://localhost:8007`.
+
+6. Access the application in your browser or via the specified endpoint.
+
+### Additional Notes
+- The dev container includes a dedicated Docker daemon, so all Docker commands will run within the container environment.
+- Refer to the `docker-compose.yml` file for service configurations and ports.
+
+For further assistance, consult the project documentation or contact the maintainers.
