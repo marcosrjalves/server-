@@ -95,6 +95,9 @@ jobs:
   secrets:
     runs-on: ubuntu-latest
     name: Creates JWT Secret
+    env:
+      root_path: resources
+      path: resources
 
     steps:
       - name: created .env file for master
@@ -104,7 +107,7 @@ jobs:
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
             echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
             echo "JWT_SECRET=""${{ secrets.JWT_SECRET_PROD }}"" >> ./bin/.env
-        working-directory: resources
+        working-directory: ${{ env.path }}
 
       - name: created .env file for homol
         if: ${{ needs.changes.outputs.branch == 'homol' }}
@@ -113,10 +116,10 @@ jobs:
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
             echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
             echo "JWT_SECRET=""${{ secrets.JWT_SECRET_HOMOL }}"" >> ./bin/.env
-        working-directory: resources
+        working-directory: ${{ env.path }}
 
       - name: creates/updates JWT secret
         run: |
             cd ./bin/
             node createSecrets.js
-        working-directory: resources
+        working-directory: ${{ env.path }}
