@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: created .env file for master
-        if: ${{ needs.changes.outputs.branch == 'master' }}
+        if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
             touch ./bin/.env
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
