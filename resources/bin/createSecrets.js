@@ -49,7 +49,7 @@ let shouldCreate = false;
 try {
   const searchCommand = new GetSecretValueCommand({ SecretId: secretName });
   const searchResponse = await client.send(searchCommand);
-  shouldCreate = !searchResponse.SecretString;
+  shouldCreate = !!searchResponse.SecretString;
 } catch (error) {
   console.log('Error fetching secret:', error);
 }
