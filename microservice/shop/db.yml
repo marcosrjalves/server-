@@ -2,7 +2,7 @@ Resources:
   tableUser:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: User
+      TableName: ${file(./serverless-config.yml):${opt:stage, self:provider.stage}.DDB_TABLE_USER}
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -14,7 +14,7 @@ Resources:
   tableShop:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: Shop
+      TableName: ${file(./serverless-config.yml):${opt:stage, self:provider.stage}.DDB_TABLE_SHOP}
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S

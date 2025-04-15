@@ -1,5 +1,5 @@
 import { genericDaoPut, genericDaoGet } from "./GenericDao";
-const TABLE_NAME = 'User'
+const TABLE_NAME = process.env.DDB_TABLE_USER as string;
 
 export type TDBUser = {
   PK: string;

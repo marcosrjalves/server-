@@ -1,5 +1,5 @@
 import { userPutDao, userGetDao, TDBUser } from "@src/database/User";
-import bcrypt from 'bcrypt';
+import { randomBytes, scryptSync } from "crypto";
 
 export type TUser = {
   PK?: string;
@@ -49,14 +49,16 @@ export class User {
   }
 
   generatePassword(password): void {
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-    this.password = hashedPassword;
+    const salt = randomBytes(16).toString('hex');
+    const hashedPassword = scryptSync(password, salt, 64).toString('hex');
+    this.password = hashedPassword + salt;
   }
 
   async validatePassword(password: string): Promise<boolean> {
-    const validate = await bcrypt.compare(password, this.password);
-    return validate;
+    const salt = this.password.slice(-32);
+    const originalPassHash = this.password.slice(0, -32);
+    const currentPassHash = scryptSync(password, salt, 64).toString('hex');
+    return originalPassHash === currentPassHash;
   }
 
   show(): TUser & { PK: string, createdAt: string, updatedAt: string, name: string } {

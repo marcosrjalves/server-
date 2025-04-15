@@ -1,6 +1,6 @@
 import { table } from "console";
 import { genericDaoPut, genericDaoGet, genericDaoUpdate, genericDaoDelete, genericDaoQuery } from "./GenericDao";
-const TABLE_NAME = 'Shop'
+const TABLE_NAME = process.env.DDB_TABLE_SHOP as string;
 
 export type TDBProduct = {
   PK: string;
