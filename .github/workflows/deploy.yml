@@ -93,11 +93,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   secrets:
-    needs: changes
     runs-on: ubuntu-latest
     name: Creates JWT Secret
 
     steps:
+      - name: WHERE THE FUCK AM I?
+        if: ${{ needs.changes.outputs.branch == 'main' }}
+        run: |
+            ls -lha
+        working-directory: ${{ github.workspace }}
+
       - name: created .env file for master
         if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
