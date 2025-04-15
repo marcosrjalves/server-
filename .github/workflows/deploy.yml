@@ -93,6 +93,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   secrets:
+    needs: changes
     runs-on: ubuntu-latest
     name: Creates JWT Secret
     env:
