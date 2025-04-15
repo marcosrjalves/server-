@@ -45,18 +45,25 @@ const input = {
   Description: 'JWT secret for local development',
 }
 
-const searchCommand = new GetSecretValueCommand({ SecretId: secretName });
-const searchResppnse = await client.send(searchCommand);
+let shouldCreate = false;
+try {
+  const searchCommand = new GetSecretValueCommand({ SecretId: secretName });
+  const searchResponse = await client.send(searchCommand);
+  shouldCreate = !searchResponse.SecretString;
+} catch (error) {
+  console.log('Error fetching secret:', error);
+}
 
-  if (searchResppnse.SecretString) {
-    const updateCommand = new UpdateSecretCommand({
-      SecretId: secretName,
-    });
-    const response = await client.send(updateCommand);
-    console.log(response);
-  } else {
-    const command = new CreateSecretCommand(input);
-    const response = await client.send(command);
-    console.log(response);
-  }
+
+if (shouldCreate) {
+  const updateCommand = new UpdateSecretCommand({
+    SecretId: secretName,
+  });
+  const response = await client.send(updateCommand);
+  console.log(response);
+} else {
+  const command = new CreateSecretCommand(input);
+  const response = await client.send(command);
+  console.log(response);
+}
 
