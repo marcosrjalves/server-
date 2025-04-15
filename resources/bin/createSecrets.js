@@ -2,7 +2,6 @@ import { SecretsManagerClient, CreateSecretCommand, UpdateSecretCommand, GetSecr
 import 'dotenv/config';
 
 const [stage] = process.argv.slice(2);
-console.log('argv', stage);
 
 if (!stage) {
   console.error('Please provide a stage argument (e.g., hml, prd or local)');
@@ -33,8 +32,6 @@ switch (stage) {
     console.error('Invalid stage argument. Use hml, prd or local.');
     process.exit(1);
 }
-
-console.log('config', config);
 
 const client = new SecretsManagerClient(config);
 

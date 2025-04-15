@@ -56,11 +56,22 @@
     {
       "label": "CREATE LOCALSTACK JWT SECRET",
       "type": "shell",
-      "command": "cd resources/bin && node createSecretsLocal.js",
+      "command": "cd resources/bin && node createSecrets.js local",
       "detail": "Add the JWT secret to the localstack container",
       "problemMatcher": [],
       "icon": {
         "id": "terminal-bash",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "LOCALLY DEPLOY SLS IAC ON LOCALSTACK",
+      "type": "shell",
+      "command": "cd microservice/shop && npm run localDeploy",
+      "detail": "Deploys the serverless stack to localstack",
+      "problemMatcher": [],
+      "icon": {
+        "id": "cloud-upload",
         "color": "terminal.ansiCyan"
       }
     }

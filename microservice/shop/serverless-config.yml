@@ -1,12 +1,12 @@
 local:
-  JWT_SECRET: 'local/jwt/secret'
+  JWT_SECRET_NAME: 'local/jwt/secret'
   DDB_TABLE_USER: 'User'
   DDB_TABLE_SHOP: 'Shop'
 prd:
-  JWT_SECRET: 'prd/jwt/secret'
+  JWT_SECRET_NAME: 'prd/jwt/secret'
   DDB_TABLE_USER: 'Prd.User'
   DDB_TABLE_SHOP: 'Prd.Shop'
 hml:
-  JWT_SECRET: 'hml/jwt/secret'
+  JWT_SECRET_NAME: 'hml/jwt/secret'
   DDB_TABLE_USER: 'Hml.User'
   DDB_TABLE_SHOP: 'Hml.Shop'
