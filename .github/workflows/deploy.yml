@@ -103,7 +103,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: ${{ env.path }}
+        working-directory: resources
 
       - name: created .env file for main
         if: ${{ needs.changes.outputs.branch == 'main' }}
