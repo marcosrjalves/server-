@@ -104,23 +104,23 @@ jobs:
       - name: created .env file for main
         if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
-            touch ./resources/bin/.env
+            touch ./bin/.env
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
             echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
             echo "JWT_SECRET=""${{ secrets.JWT_SECRET_PROD }}"" >> ./bin/.env
-        working-directory: ${{ github.workspace }}
+        working-directory: resources
 
       - name: created .env file for homol
         if: ${{ needs.changes.outputs.branch == 'homol' }}
         run: |
-            touch ./resources/bin/.env
+            touch ./bin/.env
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
             echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
             echo "JWT_SECRET=""${{ secrets.JWT_SECRET_HOMOL }}"" >> ./bin/.env
-        working-directory: ${{ github.workspace }}/server-
+        working-directory: resources
 
       - name: creates/updates JWT secret
         run: |
-            cd resources/bin/
+            cd bin/
             node createSecrets.js
-        working-directory: ${{ github.workspace }}/server-
+        working-directory: resources
