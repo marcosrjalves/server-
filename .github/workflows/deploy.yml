@@ -9,7 +9,6 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend: ${{ steps.frontend.outputs.front }}
       microservices: ${{ steps.microservices.outputs.changes }}
       branch: ${{ steps.extract_branch.outputs.branch }}
     steps:
