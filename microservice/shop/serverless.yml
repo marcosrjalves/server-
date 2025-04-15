@@ -17,7 +17,7 @@ provider:
     ms: serverless-sandbox
   logRetentionInDays: 1
   environment:
-    JWT_SECRET: ${file(./serverless-config.yml):${opt:stage, self:provider.stage}.JWT_SECRET}
+    JWT_SECRET: ${self:custom.secret}}
     DDB_TABLE_USER: ${file(./serverless-config.yml):${opt:stage, self:provider.stage}.DDB_TABLE_USER}
     DDB_TABLE_SHOP: ${file(./serverless-config.yml):${opt:stage, self:provider.stage}.DDB_TABLE_SHOP}
 
@@ -113,6 +113,7 @@ plugins:
   - serverless-localstack
 
 custom:
+  secret: ${ssm:/aws/reference/secretsmanager/${file(./serverless-config.yml):${opt:stage, self:provider.stage}.JWT_SECRET_NAME}}
   stages:
     - prd
     - hml

@@ -10,7 +10,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=secret
-      - SERVICES=dynamodb,lambda,cloudformation,iam,cloudfront,s3,logs,apigateway,sqs,sns,secretsmanager
+      - SERVICES=dynamodb,lambda,cloudformation,iam,cloudfront,s3,logs,apigateway,sqs,sns,secretsmanager,ssm
       - DEBUG=1
       - PERSISTENCE=1
       - DOCKER_HOST=unix:///var/run/docker.sock
