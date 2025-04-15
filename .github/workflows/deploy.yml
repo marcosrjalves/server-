@@ -94,10 +94,6 @@ jobs:
 
   secrets:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: ${{ fromJSON(needs.changes.outputs.microservices) }}
-      fail-fast: false
     env:
       root_path: resources
       path: resources
