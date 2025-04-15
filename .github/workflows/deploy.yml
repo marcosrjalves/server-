@@ -97,10 +97,8 @@ jobs:
     name: Creates JWT Secret
 
     steps:
-      - name: WHERE THE FUCK AM I?
-        run: |
-            ls -lha
-        working-directory: ${{ github.workspace }}
+      - name: Commit checkout
+        uses: actions/checkout@v4
 
       - name: created .env file for master
         if: ${{ needs.changes.outputs.branch == 'main' }}
