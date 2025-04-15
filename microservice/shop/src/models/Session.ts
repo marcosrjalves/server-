@@ -1,4 +1,5 @@
-import { JWTSecret } from '@src/utils/secrets';
+// import { JWTSecret } from '@src/utils/secrets';
+import { error, HttpStatuses } from 'adapcon-utils-js';
 import jwt from 'jsonwebtoken';
 
 export type TSession = {
@@ -21,7 +22,10 @@ export class Session {
   }
 
   async create(): Promise<void> {
-    const secret = await JWTSecret();
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw error(HttpStatuses.integrationError, 'JWT secret not found');
+    }
     const { email, name } = this;
 
     const token = jwt.sign({ email, name }, secret as string, {
