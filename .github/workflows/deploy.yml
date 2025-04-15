@@ -98,7 +98,6 @@ jobs:
 
     steps:
       - name: WHERE THE FUCK AM I?
-        if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
             ls -lha
         working-directory: ${{ github.workspace }}
