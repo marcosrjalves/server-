@@ -34,6 +34,10 @@ provider:
             - 'dynamodb:*'
           Resource:
             - { "Fn::GetAtt": ["tableShop", "Arn" ] }
+        - Effect: 'Allow'
+          Action:
+            - 'secretsmanager:GetSecretValue'
+          Resource: '*'
 
 functions:
   healthCheck:
