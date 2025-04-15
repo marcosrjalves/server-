@@ -110,7 +110,6 @@ plugins:
   - serverless-prune-plugin
   - serverless-stage-manager
   - serverless-offline
-  - serverless-middleware
   - serverless-localstack
 
 custom:
