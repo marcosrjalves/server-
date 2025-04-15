@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - stage
+      - homol
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -75,7 +75,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles(format('{0}/{1}', env.path, 'package-lock.json')) }}
 
       - name: serverless deploy prod
-        if: ${{ needs.changes.outputs.branch == 'master' }}
+        if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
             npx serverless deploy
         working-directory: ${{ env.path }}
@@ -84,7 +84,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: serverless deploy hml
-        if: ${{ needs.changes.outputs.branch == 'stage' }}
+        if: ${{ needs.changes.outputs.branch == 'homol' }}
         run: |
             npx serverless deploy --stage="hml"
         working-directory: ${{ env.path }}
@@ -109,13 +109,13 @@ jobs:
             echo "JWT_SECRET=""${{ secrets.JWT_SECRET_PROD }}"" >> ./bin/.env
         working-directory: ${{ env.path }}
 
-      - name: created .env file for stage
-        if: ${{ needs.changes.outputs.branch == 'stage' }}
+      - name: created .env file for homol
+        if: ${{ needs.changes.outputs.branch == 'homol' }}
         run: |
             touch ./bin/.env
             echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
             echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
-            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_STAGE }}"" >> ./bin/.env
+            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_HOMOL }}"" >> ./bin/.env
         working-directory: ${{ env.path }}
 
       - name: creates/updates JWT secret
