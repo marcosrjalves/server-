@@ -24,7 +24,7 @@ jobs:
         id: microservices
         with:
           filters: |
-            shop: microservices/shop/**
+            shop: microservice/shop/**
           base: ${{ steps.extract_branch.outputs.branch }}
 
   microservices:
@@ -36,8 +36,8 @@ jobs:
         service: ${{ fromJSON(needs.changes.outputs.microservices) }}
       fail-fast: false
     env:
-      root_path: microservices
-      path: microservices/${{ matrix.service }}
+      root_path: microservice
+      path: microservice/${{ matrix.service }}
     name: Deploy ${{ matrix.service }} service
 
     steps:
