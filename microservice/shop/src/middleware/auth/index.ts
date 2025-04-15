@@ -2,7 +2,6 @@ import { error, HttpStatuses, lambdaRespError, lambdaSettingsGetParameters } fro
 import type { APIGatewayEvent, ProxyResult, Context } from "aws-lambda";
 import { docfy } from "./docfy";
 import jwt from 'jsonwebtoken';
-import { JWTSecret } from "@src/utils/secrets";
 
 type TMiddlewareParameters = {
   authorization: string;
@@ -11,13 +10,13 @@ type TMiddlewareParameters = {
 export async function middleware(event: APIGatewayEvent, context: Context): Promise<ProxyResult> {
   try {
     if(!this.handler) throw error(HttpStatuses.teaPot, 'Auth function must be called bounded to a handler');
-    const jwtSecret = await JWTSecret();
+    const secret = process.env.JWT_SECRET;
 
     const { authorization } = lambdaSettingsGetParameters<TMiddlewareParameters>(docfy, event);
 
     const parts = authorization.split(' ');
     const token = parts[1];
-    const session = jwt.verify(token, jwtSecret);
+    const session = jwt.verify(token, secret);
 
     return this.handler({session, event, context});
   } catch (err: any) {
