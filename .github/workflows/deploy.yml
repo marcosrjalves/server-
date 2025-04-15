@@ -105,18 +105,18 @@ jobs:
         if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
             touch ./bin/.env
-            echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
-            echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
-            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_PROD }}"" >> ./bin/.env
+            echo AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" >> ./bin/.env
+            echo AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ./bin/.env
+            echo JWT_SECRET="${{ secrets.JWT_SECRET_PROD }}" >> ./bin/.env
         working-directory: resources
 
       - name: created .env file for homol
         if: ${{ needs.changes.outputs.branch == 'homol' }}
         run: |
             touch ./bin/.env
-            echo "AWS_ACCESS_KEY_ID=""${{ secrets.AWS_ACCESS_KEY_ID }}"" >> ./bin/.env
-            echo "AWS_SECRET_ACCESS_KEY=""${{ secrets.AWS_SECRET_ACCESS_KEY }}"" >> ./bin/.env
-            echo "JWT_SECRET=""${{ secrets.JWT_SECRET_HOMOL }}"" >> ./bin/.env
+            echo AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" >> ./bin/.env
+            echo AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ./bin/.env
+            echo JWT_SECRET="${{ secrets.JWT_SECRET_HOMOL }}" >> ./bin/.env
         working-directory: resources
 
       - name: creates/updates JWT secret
