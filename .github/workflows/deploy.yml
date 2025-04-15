@@ -101,6 +101,10 @@ jobs:
       - name: Commit checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.path }}
+
       - name: created .env file for main
         if: ${{ needs.changes.outputs.branch == 'main' }}
         run: |
