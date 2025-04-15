@@ -17,18 +17,21 @@ provider:
     ms: serverless-sandbox
   logRetentionInDays: 1
   environment:
-    LOCAL_JWT_SECRET: f2bh4uyb32ubsb23bdcunnc9435#35ds&sfj
+    JWT_SECRET: ${file(./serverless-config.yml):${stage, 'local'}.JWT_SECRET}
 
-
-  # iam:
-  #   role:
-  #     statements:
-  #       - Effect: 'Allow'
-  #         Action:
-  #           - 'dynamodb:*'
-  #         Resource:
-  #           - { "Fn::GetAtt": ["tableUser", "Arn" ] }
-  #       - Effect: 'Allow'
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:*'
+          Resource:
+            - { "Fn::GetAtt": ["tableUser", "Arn" ] }
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:*'
+          Resource:
+            - { "Fn::GetAtt": ["tableShop", "Arn" ] }
 
 functions:
   healthCheck:
@@ -106,8 +109,8 @@ plugins:
 
 custom:
   stages:
-    - api
-    - dev
+    - prd
+    - hml
     - local
   prune:
     automatic: true

@@ -39,7 +39,7 @@ console.log('config', config);
 const client = new SecretsManagerClient(config);
 
 const input = {
-  Name: 'jwt/secret',
+  Name: `${stage}/jwt/secret`,
   SecretString: (stage === 'prd' || stage === 'hml') ? process.env.JWT_SECRET : 'f2bh4uyb32ubsb23bdcunnc9435#35ds&sfj',
   Description: 'JWT secret for local development',
 }

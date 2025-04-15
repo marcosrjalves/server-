@@ -1,2 +1,6 @@
 local:
-  JWT_SECRET:
+  JWT_SECRET: 'local/jwt/secret'
+prd:
+  JWT_SECRET: 'prd/jwt/secret'
+hml:
+  JWT_SECRET: 'hml/jwt/secret'
